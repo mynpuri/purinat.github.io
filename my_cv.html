@@ -3,103 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My CV</title>
+    <title>My CV & Paint App</title>
+    <!-- Tailwind CSS for modern styling and layout control -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: serif;
-            margin: 40px;
-            color: #000;
-            background-color: #fff;
-            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc;
+            color: #0f172a;
         }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        h2 {
-            font-size: 1.5rem;
-            margin-top: 30px;
-            margin-bottom: 10px;
-        }
-        ul {
-            margin-top: 5px;
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 5px;
-        }
-        a {
-            color: #0000ee;
-            text-decoration: underline;
-        }
-        .canvas-container {
-            margin-top: 15px;
-        }
-        canvas {
-            border: 1px solid #000;
-            display: block;
-            width: 100%;
-            max-width: 600px;
-            height: 500px;
-            background-color: #fff;
+        /* Canvas specific styling */
+        #paintCanvas {
             cursor: crosshair;
-        }
-        .instructions {
-            font-size: 0.9rem;
-            color: #555;
-            margin-top: 5px;
+            background-color: #ffffff;
+            touch-action: none;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-    <h1>My CV</h1>
-    <p>
-        ชื่อ-นามสกุล: ภาดล อาจหาญศิริ<br>
-        Email: padol.a@ku.th<br>
-        Education: Kasetsart University
-    </p>
+    <!-- VIEW 1: CV HOME PAGE -->
+    <div id="cvView" class="p-10 max-w-4xl mx-auto w-full">
+        <h1 class="text-3xl font-bold mb-4">My CV</h1>
+        <p class="mb-6 leading-relaxed">
+            ชื่อ-นามสกุล: ภูริณัฐ บุญศรี<br>
+            Email: phurinat.bo@ku.th<br>
+            Education: Kasetsart University
+        </p>
 
-    <h2>งานทั้งหมด</h2>
-    <ul>
-        <li><a href="#graphics-section">งาน 1: Interactive Computer Graphics</a></li>
-        <li><a href="#paint-section">งาน 2: Paint</a></li>
-    </ul>
+        <h2 class="text-2xl font-bold mb-3">งานทั้งหมด</h2>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><a href="#" id="linkGraphics" class="text-blue-600 underline hover:text-blue-800">งาน 1: Interactive Computer Graphics</a></li>
+            <li><a href="#" id="linkPaint" class="text-blue-600 underline hover:text-blue-800">งาน 2: Paint</a></li>
+        </ul>
 
-    <h2 id="graphics-section">Interactive Computer Graphics</h2>
-    <div class="canvas-container">
-        <canvas id="spriteCanvas"></canvas>
-        <p class="instructions">ขยับเมาส์ในกรอบเพื่อย้ายตำแหน่ง | ใช้ปุ่มลูกศรซ้าย/ขวา หมุน | ปุ่มลูกศรขึ้น/ลง ย่อ-ขยาย</p>
+        <!-- Interactive Graphics Section preview on CV page -->
+        <div id="graphicsSection" class="mt-8 hidden">
+            <h2 class="text-2xl font-bold mb-3">Interactive Computer Graphics</h2>
+            <div class="border border-black p-4 inline-block bg-white rounded shadow-sm">
+                <canvas id="spriteCanvas" width="600" height="500" class="border border-gray-400 block"></canvas>
+                <p class="text-sm text-gray-600 mt-2">ขยับเมาส์ในกรอบเพื่อย้ายตำแหน่ง | ใช้ปุ่มลูกศรซ้าย/ขวา หมุน | ปุ่มลูกศรขึ้น/ลง ย่อ-ขยาย</p>
+            </div>
+            <div class="mt-4">
+                <button id="backFromGraphics" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded font-sans text-sm">กลับหน้าหลัก CV</button>
+            </div>
+        </div>
     </div>
 
-    <h2 id="paint-section" style="margin-top: 50px;">Paint</h2>
-    <p>ส่วนสำหรับโปรแกรมจำลองวาดภาพ (KU Paint 95) สามารถพัฒนาต่อยอดได้ที่นี่</p>
+    <!-- VIEW 2: PAINT APPLICATION (งาน 2: Paint) -->
+    <div id="paintView" class="hidden min-h-screen bg-slate-50 flex flex-col">
+        <!-- Top Title Bar -->
+        <header class="py-4 text-center border-b border-slate-200 bg-white shadow-2xs relative">
+            <button id="backToCvFromPaint" class="absolute left-6 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-sans rounded-lg font-medium transition cursor-pointer">
+                ← กลับหน้า CV
+            </button>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Paint</h1>
+        </header>
 
+        <!-- Main Workspace -->
+        <div class="flex-1 flex flex-col lg:flex-row p-6 gap-6 items-start justify-center">
+            
+            <!-- LEFT TOOLBAR (Exact layout from reference) -->
+            <div class="w-64 bg-slate-100 border border-slate-300 rounded-xl p-4 flex flex-col gap-4 shadow-sm select-none font-sans">
+                
+                <!-- Tool Selectors -->
+                <div class="flex flex-col gap-2">
+                    <button class="tool-btn py-2 px-3 rounded-lg font-medium text-sm text-left border transition flex justify-between items-center bg-blue-500 text-white border-blue-600 shadow-xs" data-tool="pixel">
+                        <span>Pixel</span><span class="text-xs opacity-85">(P)</span>
+                    </button>
+                    <button class="tool-btn py-2 px-3 rounded-lg font-medium text-sm text-left border transition flex justify-between items-center bg-white text-slate-700 border-slate-300 hover:bg-slate-50" data-tool="line">
+                        <span>Line</span><span class="text-xs opacity-60">(L)</span>
+                    </button>
+                    <button class="tool-btn py-2 px-3 rounded-lg font-medium text-sm text-left border transition flex justify-between items-center bg-white text-slate-700 border-slate-300 hover:bg-slate-50" data-tool="rect">
+                        <span>Rect</span><span class="text-xs opacity-60">(R)</span>
+                    </button>
+                    <button class="tool-btn py-2 px-3 rounded-lg font-medium text-sm text-left border transition flex justify-between items-center bg-white text-slate-700 border-slate-300 hover:bg-slate-50" data-tool="ellipse">
+                        <span>Ellipse</span><span class="text-xs opacity-60">(E)</span>
+                    </button>
+                    <button class="tool-btn py-2 px-3 rounded-lg font-medium text-sm text-left border transition flex justify-between items-center bg-white text-slate-700 border-slate-300 hover:bg-slate-50" data-tool="triangle">
+                        <span>Triangle</span><span class="text-xs opacity-60">(T)</span>
+                    </button>
+                    <button class="tool-btn py-2 px-3 rounded-lg font-medium text-sm text-left border transition flex justify-between items-center bg-white text-slate-700 border-slate-300 hover:bg-slate-50" data-tool="eraser">
+                        <span>Eraser</span><span class="text-xs opacity-60">(X)</span>
+                    </button>
+                </div>
+
+                <hr class="border-slate-300">
+
+                <!-- Color Section -->
+                <div class="flex flex-col gap-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Color</span>
+                    
+                    <!-- Numbered Swatches Grid (1-8) -->
+                    <div class="grid grid-cols-4 gap-1.5">
+                        <button class="color-swatch h-8 rounded border border-slate-400 font-bold text-xs flex items-center justify-center bg-black text-white shadow-2xs" data-color="#000000" data-num="1">1</button>
+                        <button class="color-swatch h-8 rounded border border-slate-400 font-bold text-xs flex items-center justify-center bg-white text-black shadow-2xs" data-color="#ffffff" data-num="2">2</button>
+                        <button class="color-swatch h-8 rounded border border-slate-400 font-bold text-xs flex items-center justify-center bg-red-600 text-white shadow-2xs" data-color="#dc2626" data-num="3">3</button>
+                        <button class="color-swatch h-8 rounded border border-slate-400 font-bold text-xs flex items-center justify-center bg-green-500 text-white shadow-2xs" data-color="#22c55e" data-num="4">4</button>
+                        <button class="color-swatch h-8 rounded border border-slate-400 font-bold text-xs flex items-center justify-center bg-blue-600 text-white shadow-2xs" data-color="#2563eb" data-num="5">5</button>
+                        <button class="color-swatch h-8 rounded border border-slate-400 font-bold text-xs flex items-center justify-center bg-yellow-400 text-black shadow-2xs" data-color="#facc15" data-num="6">6</button>
+                        <button class="color-swatch h-8 rounded border border-slate-400 font-bold text-xs flex items-center justify-center bg-cyan-400 text-black shadow-2xs" data-color="#22d3ee" data-num="7">7</button>
+                        <button class="color-swatch h-8 rounded border border-slate-400 font-bold text-xs flex items-center justify-center bg-fuchsia-500 text-white shadow-2xs" data-color="#d946ef" data-num="8">8</button>
+                    </div>
+
+                    <!-- Active Color Big Preview Box -->
+                    <div id="activeColorBox" class="w-full h-10 rounded-lg border border-slate-400 bg-red-600 shadow-inner mt-1"></div>
+                </div>
+
+                <hr class="border-slate-300">
+
+                <!-- Thickness Slider -->
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex justify-between items-center text-xs font-semibold text-slate-700">
+                        <span id="thicknessLabel">Thickness: 1</span>
+                    </div>
+                    <input type="range" id="thicknessRange" min="1" max="30" value="1" class="w-full accent-blue-600 cursor-pointer">
+                </div>
+
+                <hr class="border-slate-300">
+
+                <!-- Clear Button -->
+                <button id="clearCanvasBtn" class="w-full py-2.5 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition shadow-xs cursor-pointer">
+                    Clear
+                </button>
+            </div>
+
+            <!-- RIGHT CANVAS AREA -->
+            <div class="bg-white border border-slate-300 rounded-xl p-4 shadow-sm flex items-center justify-center">
+                <canvas id="paintCanvas" width="900" height="650" class="border border-slate-300 rounded-lg block"></canvas>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Application Script -->
     <script>
-        window.onload = function () {
+        // --- Navigation Logic ---
+        const cvView = document.getElementById('cvView');
+        const paintView = document.getElementById('paintView');
+        const linkPaint = document.getElementById('linkPaint');
+        const linkGraphics = document.getElementById('linkGraphics');
+        const backToCvFromPaint = document.getElementById('backToCvFromPaint');
+        const graphicsSection = document.getElementById('graphicsSection');
+        const backFromGraphics = document.getElementById('backFromGraphics');
+
+        linkPaint.addEventListener('click', (e) => {
+            e.preventDefault();
+            cvView.classList.add('hidden');
+            paintView.classList.remove('hidden');
+            initPaintCanvas();
+        });
+
+        backToCvFromPaint.addEventListener('click', () => {
+            paintView.classList.add('hidden');
+            cvView.classList.remove('hidden');
+        });
+
+        linkGraphics.addEventListener('click', (e) => {
+            e.preventDefault();
+            graphicsSection.classList.remove('hidden');
+            initSpriteCanvas();
+        });
+
+        backFromGraphics.addEventListener('click', () => {
+            graphicsSection.classList.add('hidden');
+        });
+
+
+        // --- Sprite Animation Canvas (Graphics Work 1) ---
+        let spriteInitialized = false;
+        function initSpriteCanvas() {
+            if (spriteInitialized) return;
+            spriteInitialized = true;
+
             const canvas = document.getElementById('spriteCanvas');
             const ctx = canvas.getContext('2d');
 
-            // Handle high-DPI scaling for crisp rendering
-            function resizeCanvas() {
-                const rect = canvas.getBoundingClientRect();
-                canvas.width = rect.width * window.devicePixelRatio;
-                canvas.height = rect.height * window.devicePixelRatio;
-                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-            }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            // Transformation state variables
-            let posX = canvas.clientWidth / 2;
-            let posY = canvas.clientHeight / 2;
+            let posX = canvas.width / 2;
+            let posY = canvas.height / 2;
             let targetX = posX;
             let targetY = posY;
-            let rotation = 0; // in radians
+            let rotation = 0;
             let scale = 1.0;
 
-            // Pixel art sprite (1 = primary color, 2 = shadow/detail, 0 = transparent)
-            const pixelArtSprite = [
+            const pixelArt = [
                 [0,0,1,1,1,0,0,0],
                 [0,1,2,2,2,1,0,0],
                 [1,2,1,2,1,2,1,0],
@@ -108,80 +197,219 @@
                 [0,1,1,1,1,1,0,0],
                 [0,0,1,0,1,0,0,0]
             ];
-            const pixelSize = 8;
+            const pSize = 8;
 
-            // Track mouse inside canvas
             canvas.addEventListener('mousemove', (e) => {
                 const rect = canvas.getBoundingClientRect();
                 targetX = e.clientX - rect.left;
                 targetY = e.clientY - rect.top;
             });
 
-            // Smooth interpolation (lerp)
-            function lerp(start, end, amt) {
-                return (1 - amt) * start + amt * end;
-            }
-
-            // Keyboard controls for rotate and scale
             window.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft') {
-                    rotation -= Math.PI / 12;
-                    e.preventDefault();
-                } else if (e.key === 'ArrowRight') {
-                    rotation += Math.PI / 12;
-                    e.preventDefault();
-                } else if (e.key === 'ArrowUp') {
-                    scale = Math.min(3.0, scale + 0.1);
-                    e.preventDefault();
-                } else if (e.key === 'ArrowDown') {
-                    scale = Math.max(0.4, scale - 0.1);
-                    e.preventDefault();
+                if (graphicsSection.classList.contains('hidden')) return;
+                if (e.key === 'ArrowLeft') { rotation -= Math.PI / 12; e.preventDefault(); }
+                else if (e.key === 'ArrowRight') { rotation += Math.PI / 12; e.preventDefault(); }
+                else if (e.key === 'ArrowUp') { scale = Math.min(3.0, scale + 0.1); e.preventDefault(); }
+                else if (e.key === 'ArrowDown') { scale = Math.max(0.4, scale - 0.1); e.preventDefault(); }
+            });
+
+            function lerp(a, b, t) { return a + (b - a) * t; }
+
+            function loop() {
+                if (!graphicsSection.classList.contains('hidden')) {
+                    posX = lerp(posX, targetX, 0.15);
+                    posY = lerp(posY, targetY, 0.15);
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.save();
+                    ctx.translate(posX, posY);
+                    ctx.rotate(rotation);
+                    ctx.scale(scale, scale);
+
+                    const rows = pixelArt.length;
+                    const cols = pixelArt[0].length;
+                    const startX = -(cols * pSize) / 2;
+                    const startY = -(rows * pSize) / 2;
+
+                    for (let r = 0; r < rows; r++) {
+                        for (let c = 0; c < cols; c++) {
+                            const val = pixelArt[r][c];
+                            if (val !== 0) {
+                                ctx.fillStyle = val === 1 ? '#1e3a8a' : '#3b82f6';
+                                ctx.fillRect(startX + c * pSize, startY + r * pSize, pSize, pSize);
+                            }
+                        }
+                    }
+                    ctx.restore();
+                }
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+
+        // --- Paint App Logic (Work 2) ---
+        let paintInitialized = false;
+        function initPaintCanvas() {
+            if (paintInitialized) return;
+            paintInitialized = true;
+
+            const canvas = document.getElementById('paintCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set pure white initial background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let currentTool = 'pixel';
+            let currentColor = '#dc2626'; // Default red matching reference
+            let currentThickness = 1;
+
+            let isDrawing = false;
+            let startX = 0;
+            let startY = 0;
+            let snapshot = null;
+
+            // UI Elements
+            const toolButtons = document.querySelectorAll('.tool-btn');
+            const colorSwatches = document.querySelectorAll('.color-swatch');
+            const activeColorBox = document.getElementById('activeColorBox');
+            const thicknessRange = document.getElementById('thicknessRange');
+            const thicknessLabel = document.getElementById('thicknessLabel');
+            const clearBtn = document.getElementById('clearCanvasBtn');
+
+            // Tool selection
+            toolButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    toolButtons.forEach(b => {
+                        b.className = "tool-btn py-2 px-3 rounded-lg font-medium text-sm text-left border transition flex justify-between items-center bg-white text-slate-700 border-slate-300 hover:bg-slate-50";
+                    });
+                    btn.className = "tool-btn py-2 px-3 rounded-lg font-medium text-sm text-left border transition flex justify-between items-center bg-blue-500 text-white border-blue-600 shadow-xs";
+                    currentTool = btn.getAttribute('data-tool');
+                });
+            });
+
+            // Color selection
+            colorSwatches.forEach(swatch => {
+                swatch.addEventListener('click', () => {
+                    currentColor = swatch.getAttribute('data-color');
+                    activeColorBox.style.backgroundColor = currentColor;
+                });
+            });
+
+            // Thickness slider
+            thicknessRange.addEventListener('input', (e) => {
+                currentThickness = parseInt(e.target.value);
+                thicknessLabel.textContent = `Thickness: ${currentThickness}`;
+            });
+
+            // Clear button
+            clearBtn.addEventListener('click', () => {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            });
+
+            // Keyboard shortcuts for tools and colors
+            window.addEventListener('keydown', (e) => {
+                if (paintView.classList.contains('hidden')) return;
+                const key = e.key.toLowerCase();
+                if (key === 'p') selectToolByCode('pixel');
+                else if (key === 'l') selectToolByCode('line');
+                else if (key === 'r') selectToolByCode('rect');
+                else if (key === 'e') selectToolByCode('ellipse');
+                else if (key === 't') selectToolByCode('triangle');
+                else if (key === 'x') selectToolByCode('eraser');
+                else if (['1','2','3','4','5','6','7','8'].includes(e.key)) {
+                    const swatch = document.querySelector(`.color-swatch[data-num="${e.key}"]`);
+                    if (swatch) swatch.click();
                 }
             });
 
-            // Render loop
-            function animate() {
-                posX = lerp(posX, targetX, 0.15);
-                posY = lerp(posY, targetY, 0.15);
-
-                const width = canvas.clientWidth;
-                const height = canvas.clientHeight;
-
-                ctx.clearRect(0, 0, width, height);
-
-                ctx.save();
-                ctx.translate(posX, posY);
-                ctx.rotate(rotation);
-                ctx.scale(scale, scale);
-
-                const rows = pixelArtSprite.length;
-                const cols = pixelArtSprite[0].length;
-                const totalW = cols * pixelSize;
-                const totalH = rows * pixelSize;
-                const startXCoord = -totalW / 2;
-                const startYCoord = -totalH / 2;
-
-                for (let r = 0; r < rows; r++) {
-                    for (let c = 0; c < cols; c++) {
-                        const val = pixelArtSprite[r][c];
-                        if (val !== 0) {
-                            ctx.fillStyle = val === 1 ? '#1e3a8a' : '#3b82f6'; // Blue shades
-                            ctx.fillRect(
-                                startXCoord + c * pixelSize,
-                                startYCoord + r * pixelSize,
-                                pixelSize,
-                                pixelSize
-                            );
-                        }
-                    }
-                }
-
-                ctx.restore();
-                requestAnimationFrame(animate);
+            function selectToolByCode(toolName) {
+                const targetBtn = document.querySelector(`.tool-btn[data-tool="${toolName}"]`);
+                if (targetBtn) targetBtn.click();
             }
 
-            animate();
-        };
+            // Mouse Events for drawing
+            canvas.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                const rect = canvas.getBoundingClientRect();
+                startX = e.clientX - rect.left;
+                startY = e.clientY - rect.top;
+                snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                if (currentTool === 'pixel' || currentTool === 'eraser') {
+                    ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+                    ctx.fillStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+                    ctx.lineWidth = currentThickness;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    ctx.lineTo(mouseX, mouseY);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(mouseX, mouseY);
+                } else {
+                    ctx.putImageData(snapshot, 0, 0);
+                    drawShape(mouseX, mouseY);
+                }
+            });
+
+            canvas.addEventListener('mouseup', (e) => {
+                if (!isDrawing) return;
+                isDrawing = false;
+                ctx.beginPath();
+                if (currentTool !== 'pixel' && currentTool !== 'eraser') {
+                    const rect = canvas.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    ctx.putImageData(snapshot, 0, 0);
+                    drawShape(mouseX, mouseY);
+                }
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                isDrawing = false;
+                ctx.beginPath();
+            });
+
+            function drawShape(x, y) {
+                ctx.strokeStyle = currentColor;
+                ctx.fillStyle = currentColor;
+                ctx.lineWidth = currentThickness;
+
+                if (currentTool === 'line') {
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                } else if (currentTool === 'rect') {
+                    ctx.strokeRect(startX, startY, x - startX, y - startY);
+                } else if (currentTool === 'ellipse') {
+                    ctx.beginPath();
+                    const radiusX = Math.abs(x - startX) / 2;
+                    const radiusY = Math.abs(y - startY) / 2;
+                    const centerX = startX + (x - startX) / 2;
+                    const centerY = startY + (y - startY) / 2;
+                    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+                    ctx.stroke();
+                } else if (currentTool === 'triangle') {
+                    ctx.beginPath();
+                    ctx.moveTo(startX + (x - startX) / 2, startY);
+                    ctx.lineTo(x, y);
+                    ctx.lineTo(startX, y);
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        }
     </script>
 </body>
 </html>
