@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My CV</title>
+    <style>
+        body {
+            font-family: serif;
+            margin: 40px;
+            color: #000;
+            background-color: #fff;
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+        ul {
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        a {
+            color: #0000ee;
+            text-decoration: underline;
+        }
+        .canvas-container {
+            margin-top: 15px;
+        }
+        canvas {
+            border: 1px solid #000;
+            display: block;
+            width: 100%;
+            max-width: 600px;
+            height: 500px;
+            background-color: #fff;
+            cursor: crosshair;
+        }
+        .instructions {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>My CV</h1>
+    <p>
+        ชื่อ-นามสกุล: ภาดล อาจหาญศิริ<br>
+        Email: padol.a@ku.th<br>
+        Education: Kasetsart University
+    </p>
+
+    <h2>งานทั้งหมด</h2>
+    <ul>
+        <li><a href="#graphics-section">งาน 1: Interactive Computer Graphics</a></li>
+        <li><a href="#paint-section">งาน 2: Paint</a></li>
+    </ul>
+
+    <h2 id="graphics-section">Interactive Computer Graphics</h2>
+    <div class="canvas-container">
+        <canvas id="spriteCanvas"></canvas>
+        <p class="instructions">ขยับเมาส์ในกรอบเพื่อย้ายตำแหน่ง | ใช้ปุ่มลูกศรซ้าย/ขวา หมุน | ปุ่มลูกศรขึ้น/ลง ย่อ-ขยาย</p>
+    </div>
+
+    <h2 id="paint-section" style="margin-top: 50px;">Paint</h2>
+    <p>ส่วนสำหรับโปรแกรมจำลองวาดภาพ (KU Paint 95) สามารถพัฒนาต่อยอดได้ที่นี่</p>
+
+    <script>
+        window.onload = function () {
+            const canvas = document.getElementById('spriteCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Handle high-DPI scaling for crisp rendering
+            function resizeCanvas() {
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width * window.devicePixelRatio;
+                canvas.height = rect.height * window.devicePixelRatio;
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Transformation state variables
+            let posX = canvas.clientWidth / 2;
+            let posY = canvas.clientHeight / 2;
+            let targetX = posX;
+            let targetY = posY;
+            let rotation = 0; // in radians
+            let scale = 1.0;
+
+            // Pixel art sprite (1 = primary color, 2 = shadow/detail, 0 = transparent)
+            const pixelArtSprite = [
+                [0,0,1,1,1,0,0,0],
+                [0,1,2,2,2,1,0,0],
+                [1,2,1,2,1,2,1,0],
+                [1,2,2,2,2,2,1,0],
+                [1,1,2,2,2,1,1,0],
+                [0,1,1,1,1,1,0,0],
+                [0,0,1,0,1,0,0,0]
+            ];
+            const pixelSize = 8;
+
+            // Track mouse inside canvas
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                targetX = e.clientX - rect.left;
+                targetY = e.clientY - rect.top;
+            });
+
+            // Smooth interpolation (lerp)
+            function lerp(start, end, amt) {
+                return (1 - amt) * start + amt * end;
+            }
+
+            // Keyboard controls for rotate and scale
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    rotation -= Math.PI / 12;
+                    e.preventDefault();
+                } else if (e.key === 'ArrowRight') {
+                    rotation += Math.PI / 12;
+                    e.preventDefault();
+                } else if (e.key === 'ArrowUp') {
+                    scale = Math.min(3.0, scale + 0.1);
+                    e.preventDefault();
+                } else if (e.key === 'ArrowDown') {
+                    scale = Math.max(0.4, scale - 0.1);
+                    e.preventDefault();
+                }
+            });
+
+            // Render loop
+            function animate() {
+                posX = lerp(posX, targetX, 0.15);
+                posY = lerp(posY, targetY, 0.15);
+
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+
+                ctx.clearRect(0, 0, width, height);
+
+                ctx.save();
+                ctx.translate(posX, posY);
+                ctx.rotate(rotation);
+                ctx.scale(scale, scale);
+
+                const rows = pixelArtSprite.length;
+                const cols = pixelArtSprite[0].length;
+                const totalW = cols * pixelSize;
+                const totalH = rows * pixelSize;
+                const startXCoord = -totalW / 2;
+                const startYCoord = -totalH / 2;
+
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        const val = pixelArtSprite[r][c];
+                        if (val !== 0) {
+                            ctx.fillStyle = val === 1 ? '#1e3a8a' : '#3b82f6'; // Blue shades
+                            ctx.fillRect(
+                                startXCoord + c * pixelSize,
+                                startYCoord + r * pixelSize,
+                                pixelSize,
+                                pixelSize
+                            );
+                        }
+                    }
+                }
+
+                ctx.restore();
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        };
+    </script>
+</body>
+</html>
